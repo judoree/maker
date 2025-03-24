@@ -1,87 +1,32 @@
-# Welcome to React Router!
+## 🎯 목표
 
-A modern, production-ready template for building full-stack React applications using React Router.
+- **Cursor AI 활용**하여 효율적인 개발 학습
+- 취업 준비와 함께 **사이드 프로젝트 진행**
+- **개발 역량 강화**를 위한 지속적인 공부
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## 📌 실천 계획
 
-## Features
+1. **Cursor AI 적극 활용**
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+   - 코드 자동 완성 및 리팩토링 학습
+   - 개발 생산성 극대화
 
-## Getting Started
+2. **사이드 프로젝트 진행**
 
-### Installation
+   - 실제 프로젝트를 통해 실무 감각 익히기
+   - GitHub에 코드 및 문서화 적극 공유
 
-Install the dependencies:
+3. **React 및 Backend 학습 강화**
 
-```bash
-npm install
-```
+   - `React Router`, `SSR`, `Feature-Based Structure` 등 학습
+   - MySQL 및 서버 관련 기술 심화
 
-### Development
+4. **오픈소스 및 개발 커뮤니티 참여**
+   - 오픈소스 기여로 실전 경험 쌓기
+   - 개발자 네트워크 확장
 
-Start the development server with HMR:
+## 🛠️ 앞으로 추가할 내용
 
-```bash
-npm run dev
-```
-
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+- 진행 중인 **사이드 프로젝트 목록**
+- 학습한 기술 및 **블로그 정리**
+- 개발 목표 및 성과 공유
