@@ -38,7 +38,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <div className="py-28">
-      <Navigation isLoggedIn={true} hasNotifications={true} hasMessages={true} />
+      {/* true 로 해서 Product card 세로 로 고정 됌 */}
+      <Navigation isLoggedIn={false} hasNotifications={false} hasMessages={false} />
       <Outlet />
     </div>
   );
