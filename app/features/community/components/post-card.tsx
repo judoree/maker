@@ -2,6 +2,7 @@ import { Link } from 'react-router';
 import { Card, CardFooter, CardHeader, CardTitle } from '../../../common/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '../../../common/components/ui/avatar';
 import { Button } from '../../../common/components/ui/button';
+import { DotIcon } from 'lucide-react';
 
 interface PostCardProps {
   id: string;
@@ -29,6 +30,7 @@ export function PostCard({ id, title, author, category, createdAt, replyId }: Po
             <CardTitle>{title}</CardTitle>
             <div className="flex gap-2 text-xs leading-tight text-muted-foreground">
               <span>{author.name}</span>
+              <DotIcon className="w-4 h-4" />
               <span>{category}</span>
               <span>{createdAt}</span>
             </div>
@@ -36,9 +38,7 @@ export function PostCard({ id, title, author, category, createdAt, replyId }: Po
         </CardHeader>
         {replyId && (
           <CardFooter className="flex justify-end">
-            <Button variant="link" asChild>
-              <Link to={`/community/${replyId}`}>Reply &rarr;</Link>
-            </Button>
+            <Button variant="link">Reply &rarr;</Button>
           </CardFooter>
         )}
       </Card>
