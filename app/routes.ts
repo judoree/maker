@@ -1,9 +1,9 @@
 import { type RouteConfig, index, prefix, route } from '@react-router/dev/routes';
 
 export default [
-  index('common/pages/home-page.tsx'), // 이 index 는 내 홈페이지
+  index('common/pages/home-page.tsx'),
   ...prefix('products', [
-    index('features/products/pages/products-page.tsx'), // 이 말은 배열 안에 있는것들은 /products 시작
+    index('features/products/pages/products-page.tsx'),
     ...prefix('leaderboards', [
       index('features/products/pages/leaderboards-page.tsx'),
       route('/yearly/:year', 'features/products/pages/yearly-leaderboard-page.tsx'),
@@ -20,6 +20,3 @@ export default [
     route('/promote', 'features/products/pages/promote-page.tsx'),
   ]),
 ] satisfies RouteConfig;
-
-// prefix 밖에서 index 는 홈페이지 의미
-// : react router 에게 이주소의 부분이 변경될 것
