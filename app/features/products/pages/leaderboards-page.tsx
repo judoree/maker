@@ -33,7 +33,7 @@ export default function LeaderboardsPage() {
           />
         ))}
         <Button variant="link" asChild className="text-lg self-center">
-          <Link to="/products/leaderboard/dailys">Explore all products &rarr;</Link>
+          <Link to="/products/leaderboards/daily">Explore all products &rarr;</Link>
         </Button>
       </div>
       <div className="grid grid-cols-3 gap-4">

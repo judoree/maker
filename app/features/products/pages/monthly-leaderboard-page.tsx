@@ -1,38 +1,32 @@
-import type { Route } from './+types/monthly-leaderboard-page.types';
+import { DateTime } from 'luxon';
+import type { Route } from './+types/daily-leaderboard-page';
+import { data, isRouteErrorResponse } from 'react-router';
 
-export function loader({ request, params }: Route.LoaderArgs) {
-  return {
-    year: params.year,
-    month: params.month,
-    products: [],
-  };
-}
-
-export function action({ request }: Route.ActionArgs) {
-  return {};
-}
-
-export function meta({}: Route.MetaFunction) {
-  return [
-    { title: 'Monthly Leaderboard | Product Hunt Clone' },
-    { name: 'description', content: 'View the top products of the month' },
-  ];
-}
-
-export default function MonthlyLeaderboardPage({ loaderData }: Route.ComponentProps) {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-4">
-        Top Products of {loaderData.month}/{loaderData.year}
-      </h1>
-      <div className="grid grid-cols-1 gap-6">
-        {loaderData.products.map((product) => (
-          <div key={product.id} className="border rounded-lg p-4">
-            <h2 className="text-xl font-semibold">{product.name}</h2>
-            <p className="text-gray-600">{product.description}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+export const loader = ({ params }: Route.LoaderArgs) => {
+  const { year, month, day } = params;
+  const date = DateTime.fromObject({ year: Number(year), month: Number(month), day: Number(day) }).setZone(
+    'Asia/Seoul'
   );
+  if (!date.isValid) {
+    throw data({ error_code: 'INVALID_DATE', message: 'Invalid date' }, { status: 400 });
+  }
+  return;
+};
+
+export default function DailyLeaderboardPage() {
+  return <div className="container mx-auto px-4 py-8"></div>;
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        {error.data.message} / {error.data.error_code}
+      </div>
+    );
+  }
+  if (error instanceof Error) {
+    return <div>{error.message}</div>;
+  }
+  return <div>Unknown Error</div>;
 }

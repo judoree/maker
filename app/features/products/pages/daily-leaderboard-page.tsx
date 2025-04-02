@@ -1,38 +1,49 @@
-import type { Route } from './+types/daily-leaderboard-page.types';
+import { DateTime } from 'luxon';
+import type { Route } from './+types/daily-leaderboard-page';
+import { data, isRouteErrorResponse } from 'react-router';
+import { z } from 'zod';
 
-export function loader({ request, params }: Route.LoaderArgs) {
-  return {
-    year: params.year,
-    week: params.week,
-    products: [],
-  };
-}
+const paramsSchema = z.object({
+  year: z.coerce.number(),
+  month: z.coerce.number(),
+  day: z.coerce.number(),
+});
 
-export function action({ request }: Route.ActionArgs) {
-  return {};
-}
-
-export function meta({}: Route.MetaFunction) {
-  return [
-    { title: 'Daily Leaderboard | Product Hunt Clone' },
-    { name: 'description', content: 'View the top products of the day' },
-  ];
-}
-
-export default function DailyLeaderboardPage({ loaderData }: Route.ComponentProps) {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-4">
-        Top Products of Week {loaderData.week} in {loaderData.year}
-      </h1>
-      <div className="grid grid-cols-1 gap-6">
-        {loaderData.products.map((product) => (
-          <div key={product.id} className="border rounded-lg p-4">
-            <h2 className="text-xl font-semibold">{product.name}</h2>
-            <p className="text-gray-600">{product.description}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+export const loader = ({ params }: Route.LoaderArgs) => {
+  const { success, data: parsedData } = paramsSchema.safeParse(params);
+  if (!success) {
+    throw data({ error_code: 'INVALID_PARAMS', message: 'Invalid params' }, { status: 400 });
+  }
+  const date = DateTime.fromObject({ year: parsedData.year, month: parsedData.month, day: parsedData.day }).setZone(
+    'Asia/Seoul'
   );
+  if (!date.isValid) {
+    throw data({ error_code: 'INVALID_DATE', message: 'Invalid date' }, { status: 400 });
+  }
+  const today = DateTime.now().setZone('Asia/Seoul').startOf('day');
+  if (date > today) {
+    throw data({ error_code: 'FUTURE_DATE', message: 'Future date' }, { status: 400 });
+  }
+
+  return {
+    date,
+  };
+};
+
+export default function DailyLeaderboardPage() {
+  return <div className="container mx-auto px-4 py-8"></div>;
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        {error.data.message} / {error.data.error_code}
+      </div>
+    );
+  }
+  if (error instanceof Error) {
+    return <div>{error.message}</div>;
+  }
+  return <div>Unknown Error</div>;
 }
