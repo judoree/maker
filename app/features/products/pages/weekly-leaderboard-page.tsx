@@ -1,39 +1,92 @@
-import type { Route } from './+types/weekly-leaderboard-page.types';
+import { DateTime } from 'luxon';
+import type { Route } from './+types/weekly-leaderboard-page';
+import { data, isRouteErrorResponse, Link } from 'react-router';
+import { z } from 'zod';
+import { HeroSection } from '~/common/components/hero-section';
+import { ProductCard } from '../components/product-card';
+import { Button } from '~/common/components/ui/button';
+import ProductPagination from '~/common/components/product-pagination';
 
-export function loader({ request, params }: Route.LoaderArgs) {
+const paramsSchema = z.object({
+  year: z.coerce.number(),
+  week: z.coerce.number(),
+});
+
+export const loader = ({ params }: Route.LoaderArgs) => {
+  const { success, data: parsedData } = paramsSchema.safeParse(params);
+  if (!success) {
+    throw data({ error_code: 'INVALID_PARAMS', message: 'Invalid params' }, { status: 400 });
+  }
+  const date = DateTime.fromObject({ weekYear: parsedData.year, weekNumber: parsedData.week }).setZone('Asia/Seoul');
+  if (!date.isValid) {
+    throw data({ error_code: 'INVALID_DATE', message: 'Invalid date' }, { status: 400 });
+  }
+  const today = DateTime.now().setZone('Asia/Seoul').startOf('day');
+  if (date > today) {
+    throw data({ error_code: 'FUTURE_DATE', message: 'Future date' }, { status: 400 });
+  }
+
   return {
-    year: params.year,
-    month: params.month,
-    day: params.day,
-    products: [],
+    ...parsedData,
   };
-}
-
-export function action({ request }: Route.ActionArgs) {
-  return {};
-}
-
-export function meta({}: Route.MetaFunction) {
-  return [
-    { title: 'Weekly Leaderboard | Product Hunt Clone' },
-    { name: 'description', content: 'View the top products of the week' },
-  ];
-}
+};
 
 export default function WeeklyLeaderboardPage({ loaderData }: Route.ComponentProps) {
+  const urlDate = DateTime.fromObject({
+    weekYear: loaderData.year,
+    weekNumber: loaderData.week,
+  });
+  const previousWeek = urlDate.minus({ weeks: 1 });
+  const nextWeek = urlDate.plus({ weeks: 1 });
+  const isToday = urlDate.equals(DateTime.now().startOf('week'));
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-4">
-        Top Products of Week {loaderData.day} in {loaderData.month}/{loaderData.year}
-      </h1>
-      <div className="grid grid-cols-1 gap-6">
-        {loaderData.products.map((product) => (
-          <div key={product.id} className="border rounded-lg p-4">
-            <h2 className="text-xl font-semibold">{product.name}</h2>
-            <p className="text-gray-600">{product.description}</p>
-          </div>
+    <div className="space-y-10">
+      <HeroSection
+        title={`Best of week ${urlDate.startOf('week').toLocaleString(DateTime.DATE_SHORT)}- ${urlDate
+          .endOf('week')
+          .toLocaleString(DateTime.DATE_SHORT)}`}
+      />
+      <div className="flex items-center justify-center gap-2">
+        <Button variant="secondary" asChild>
+          <Link to={`/products/leaderboards/weekly/${previousWeek.year}/${previousWeek.weekNumber}`}>
+            &larr;{previousWeek.toLocaleString(DateTime.DATE_MED)}
+          </Link>
+        </Button>
+        {isToday ? (
+          <Button variant="secondary" asChild>
+            <Link to={`/products/leaderboards/weekly/${nextWeek.year}/${nextWeek.weekNumber}`}>
+              {nextWeek.toLocaleString(DateTime.DATE_MED)} &rarr;
+            </Link>
+          </Button>
+        ) : null}
+      </div>
+      <div className="space-y-5 w-full max-w-screen-md mx-auto">
+        {Array.from({ length: 11 }).map((_, index) => (
+          <ProductCard
+            key={index}
+            id="productId"
+            name="Product Name"
+            description="Product Description"
+            commentCount={12}
+            viewCount={12}
+            upvoteCount={120}
+          />
         ))}
       </div>
+      <ProductPagination totalPages={10} />
     </div>
   );
+}
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  if (isRouteErrorResponse(error)) {
+    return (
+      <div>
+        {error.data.message} / {error.data.error_code}
+      </div>
+    );
+  }
+  if (error instanceof Error) {
+    return <div>{error.message}</div>;
+  }
+  return <div>Unknown Error</div>;
 }
