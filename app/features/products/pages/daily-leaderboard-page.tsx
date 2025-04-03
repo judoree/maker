@@ -1,7 +1,11 @@
 import { DateTime } from 'luxon';
 import type { Route } from './+types/daily-leaderboard-page';
-import { data, isRouteErrorResponse } from 'react-router';
+import { data, isRouteErrorResponse, Link } from 'react-router';
 import { z } from 'zod';
+import { HeroSection } from '~/common/components/hero-section';
+import { ProductCard } from '../components/product-card';
+import { Button } from '~/common/components/ui/button';
+import ProductPagination from '~/common/components/product-pagination';
 
 const paramsSchema = z.object({
   year: z.coerce.number(),
@@ -26,14 +30,53 @@ export const loader = ({ params }: Route.LoaderArgs) => {
   }
 
   return {
-    date,
+    ...parsedData,
   };
 };
 
-export default function DailyLeaderboardPage() {
-  return <div className="container mx-auto px-4 py-8"></div>;
+export default function DailyLeaderboardPage({ loaderData }: Route.ComponentProps) {
+  const urlDate = DateTime.fromObject({
+    year: loaderData.year,
+    month: loaderData.month,
+    day: loaderData.day,
+  });
+  const previousDay = urlDate.minus({ day: 1 });
+  const nextDate = urlDate.plus({ day: 1 });
+  const isToday = urlDate.equals(DateTime.now().startOf('day'));
+  return (
+    <div className="space-y-10">
+      <HeroSection title={`The best products of  ${urlDate.toLocaleString(DateTime.DATE_MED)}`} />
+      <div className="flex items-center justify-center gap-2">
+        <Button variant="secondary" asChild>
+          <Link to={`/products/leaderboards/daily/${previousDay.year}/${previousDay.month}/${previousDay.day}`}>
+            &larr;{previousDay.toLocaleString(DateTime.DATE_MED)}
+          </Link>
+        </Button>
+        {isToday ? (
+          <Button variant="secondary" asChild>
+            <Link to={`/products/leaderboards/daily/${nextDate.year}/${nextDate.month}/${nextDate.day}`}>
+              {nextDate.toLocaleString(DateTime.DATE_MED)} &rarr;
+            </Link>
+          </Button>
+        ) : null}
+      </div>
+      <div className="space-y-5 w-full max-w-screen-md mx-auto">
+        {Array.from({ length: 11 }).map((_, index) => (
+          <ProductCard
+            key={index}
+            id="productId"
+            name="Product Name"
+            description="Product Description"
+            commentCount={12}
+            viewCount={12}
+            upvoteCount={120}
+          />
+        ))}
+      </div>
+      <ProductPagination totalPages={10} />
+    </div>
+  );
 }
-
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   if (isRouteErrorResponse(error)) {
     return (
